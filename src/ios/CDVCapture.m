@@ -728,7 +728,16 @@
     NSURL* fileURL = [NSURL fileURLWithPath:filePath isDirectory:NO];
     
     // create AVAudioPlayer
-    self.avRecorder = [[AVAudioRecorder alloc] initWithURL:fileURL settings:nil error:&err];
+    
+    NSDictionary *recordSettings = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    [NSNumber numberWithInt:AVAudioQualityMin], AVEncoderAudioQualityKey,
+                                    [NSNumber numberWithInt: 1], AVNumberOfChannelsKey,
+                                    [NSNumber numberWithFloat:8000.0], AVSampleRateKey,
+                                    //[NSNumber numberWithInt:8], AVLinearPCMBitDepthKey,
+                                    nil];
+    
+    
+    self.avRecorder = [[AVAudioRecorder alloc] initWithURL:fileURL settings:recordSettings error:&err];
     if (err) {
         NSLog(@"Failed to initialize AVAudioRecorder: %@\n", [err localizedDescription]);
         self.avRecorder = nil;
@@ -779,8 +788,41 @@
         __block NSError* error = nil;
         
         void (^startRecording)(void) = ^{
+            //CHAD, modify self.avSession = AVAudioSession to reduce size
+            //can we set the bitrate and such to reduce file size?
+            // setPreferredSampleRate:error
+            /*NSError* errorSamplingRate = nil;
+             NSError* errorChannels = nil;
+             
+             double sampleRate = 8000.0;
+             
+             AVAudioSession *session = self.avSession;
+             
+             //Sample rate
+             NSLog(@"Before SampleRate = %0.0fHZ\n", session.sampleRate);
+             [self.avSession setPreferredSampleRate:sampleRate error:&errorSamplingRate];
+             NSLog(@"New SampleRate = %0.0fHZ\n", self.avSession.sampleRate);
+             
+             if (errorSamplingRate) {
+             NSLog(@"Error %ld, %@", (long)errorSamplingRate.code, errorSamplingRate.localizedDescription);
+             }
+             */
+            
+            //Channels
+            /*NSLog(@"Before channels = %@\n", [self.avSession inputNumberOfChannels]);
+             [self.avSession setPreferredInputNumberOfChannels:1 error:&errorChannels];
+             NSLog(@"New channels = %@\n", [self.avSession inputNumberOfChannels]);
+             NSLog(@"Error if any on Channels = %@\n", [errorChannels localizedDescription]);
+             */
+            
+            
+            
+            
+            //end bitrate
+            
             [self.avSession setCategory:AVAudioSessionCategoryRecord error:&error];
             [self.avSession setActive:YES error:&error];
+            
             if (error) {
                 // can't continue without active audio session
                 self.errorCode = CAPTURE_INTERNAL_ERR;

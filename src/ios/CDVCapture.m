@@ -108,10 +108,10 @@
         
         SEL selector = NSSelectorFromString(@"presentViewController:animated:completion:");
         if ([self.viewController respondsToSelector:selector]) {
-            [self.viewController presentViewController:navController animated:YES completion:nil];
+            [self.viewController presentViewController:navController animated:NO completion:nil];
         } else {
             // deprecated as of iOS >= 6.0
-            [self.viewController presentModalViewController:navController animated:YES];
+            [self.viewController presentModalViewController:navController animated:NO];
         }
         
     }
@@ -639,6 +639,8 @@
     [microphoneView setIsAccessibilityElement:NO];
     [tmp addSubview:microphoneView];
     
+    
+    
     // add bottom bar view
     UIImage* grayBkg = [UIImage imageNamed:[self resolveImageResource:@"CDVCapture.bundle/controls_bg"]];
     UIView* controls = [[UIView alloc] initWithFrame:CGRectMake(0, microphone.size.height, viewRect.size.width, grayBkg.size.height)];
@@ -676,10 +678,20 @@
     
     // Add record button
     
-    self.recordImage = [UIImage imageNamed:[self resolveImageResource:@"CDVCapture.bundle/record_button"]];
-    self.stopRecordImage = [UIImage imageNamed:[self resolveImageResource:@"CDVCapture.bundle/stop_button"]];
+    /*self.recordImage = [UIImage imageNamed:[self resolveImageResource:@"CDVCapture.bundle/record_button"]];
+     self.stopRecordImage = [UIImage imageNamed:[self resolveImageResource:@"CDVCapture.bundle/stop_button"]];
+     self.recordButton.accessibilityTraits |= [self accessibilityTraits];
+     self.recordButton = [[UIButton alloc] initWithFrame:CGRectMake((viewRect.size.width - recordImage.size.width) / 2, (microphone.size.height + (grayBkg.size.height - recordImage.size.height) / 2), recordImage.size.width, recordImage.size.height)];
+     
+     */
+    //Chad
+    self.recordImage = [UIImage imageNamed:[self resolveImageResource:@"CDVCapture.bundle/microphone"]];
+    self.stopRecordImage = [UIImage imageNamed:[self resolveImageResource:@"CDVCapture.bundle/microphone"]];
     self.recordButton.accessibilityTraits |= [self accessibilityTraits];
-    self.recordButton = [[UIButton alloc] initWithFrame:CGRectMake((viewRect.size.width - recordImage.size.width) / 2, (microphone.size.height + (grayBkg.size.height - recordImage.size.height) / 2), recordImage.size.width, recordImage.size.height)];
+    self.recordButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, recordImage.size.width, recordImage.size.height)];
+    //end Chad
+    
+    
     [self.recordButton setAccessibilityLabel:NSLocalizedString(@"toggle audio recording", nil)];
     [self.recordButton setImage:recordImage forState:UIControlStateNormal];
     [self.recordButton addTarget:self action:@selector(processButton:) forControlEvents:UIControlEventTouchUpInside];
@@ -732,7 +744,7 @@
     NSDictionary *recordSettings = [NSDictionary dictionaryWithObjectsAndKeys:
                                     [NSNumber numberWithInt:AVAudioQualityMin], AVEncoderAudioQualityKey,
                                     [NSNumber numberWithInt: 1], AVNumberOfChannelsKey,
-                                    [NSNumber numberWithFloat:8000.0], AVSampleRateKey,
+                                    //[NSNumber numberWithFloat:8000.0], AVSampleRateKey,
                                     //[NSNumber numberWithInt:8], AVLinearPCMBitDepthKey,
                                     nil];
     
@@ -899,9 +911,9 @@
 {
     // called when done button pressed or when error condition to do cleanup and remove view
     if ([self.captureCommand.viewController.modalViewController respondsToSelector:@selector(presentingViewController)]) {
-        [[self.captureCommand.viewController.modalViewController presentingViewController] dismissModalViewControllerAnimated:YES];
+        [[self.captureCommand.viewController.modalViewController presentingViewController] dismissModalViewControllerAnimated:NO];
     } else {
-        [[self.captureCommand.viewController.modalViewController parentViewController] dismissModalViewControllerAnimated:YES];
+        [[self.captureCommand.viewController.modalViewController parentViewController] dismissModalViewControllerAnimated:NO];
     }
     
     if (!self.pluginResult) {

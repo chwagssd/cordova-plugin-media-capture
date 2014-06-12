@@ -732,10 +732,25 @@
     
     // generate unique file name
     NSString* filePath;
+    NSString* nextFilePath;
+    
+    //CHAD
+    //remove all temp files created in the past that are wav's
     int i = 1;
     do {
         filePath = [NSString stringWithFormat:@"%@/audio_%03d.wav", docsPath, i++];
-    } while ([fileMgr fileExistsAtPath:filePath]);
+        nextFilePath = [NSString stringWithFormat:@"%@/audio_%03d.wav", docsPath, i];
+        
+        if([fileMgr fileExistsAtPath:filePath]){
+            //remove that file
+            NSLog(@"File purged: %@\n", filePath);
+            
+            [fileMgr removeItemAtPath:filePath error:NULL];
+        }
+        
+    } while ([fileMgr fileExistsAtPath:nextFilePath]);
+    
+    filePath = [NSString stringWithFormat:@"%@/audio_%03d.wav", docsPath, 1];
     
     NSURL* fileURL = [NSURL fileURLWithPath:filePath isDirectory:NO];
     
@@ -744,7 +759,7 @@
     NSDictionary *recordSettings = [NSDictionary dictionaryWithObjectsAndKeys:
                                     [NSNumber numberWithInt:AVAudioQualityMin], AVEncoderAudioQualityKey,
                                     [NSNumber numberWithInt: 1], AVNumberOfChannelsKey,
-                                    //[NSNumber numberWithFloat:8000.0], AVSampleRateKey,
+                                    [NSNumber numberWithFloat:8000.0], AVSampleRateKey,
                                     //[NSNumber numberWithInt:8], AVLinearPCMBitDepthKey,
                                     nil];
     

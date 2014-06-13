@@ -633,7 +633,7 @@
     }
     
     UIImage* microphone = [UIImage imageNamed:[self resolveImageResource:microphoneResource]];
-    UIView* microphoneView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, viewRect.size.width, microphone.size.height)];
+    UIView* microphoneView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, viewRect.size.width, viewRect.size.height)];
     [microphoneView setBackgroundColor:[UIColor colorWithPatternImage:microphone]];
     [microphoneView setUserInteractionEnabled:NO];
     [microphoneView setIsAccessibilityElement:NO];
@@ -658,23 +658,6 @@
     [self.recordingView setUserInteractionEnabled:NO];
     [self.recordingView setIsAccessibilityElement:NO];
     [tmp addSubview:self.recordingView];
-    
-    // add label
-    self.timerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, viewRect.size.width, recordingBkg.size.height)];
-    // timerLabel.autoresizingMask = reSizeMask;
-    [self.timerLabel setBackgroundColor:[UIColor clearColor]];
-    [self.timerLabel setTextColor:[UIColor whiteColor]];
-#ifdef __IPHONE_6_0
-    [self.timerLabel setTextAlignment:NSTextAlignmentCenter];
-#else
-    // for iOS SDK < 6.0
-    [self.timerLabel setTextAlignment:UITextAlignmentCenter];
-#endif
-    [self.timerLabel setText:@"0:00"];
-    [self.timerLabel setAccessibilityHint:NSLocalizedString(@"recorded time in minutes and seconds", nil)];
-    self.timerLabel.accessibilityTraits |= UIAccessibilityTraitUpdatesFrequently;
-    self.timerLabel.accessibilityTraits &= ~UIAccessibilityTraitStaticText;
-    [tmp addSubview:self.timerLabel];
     
     // Add record button
     
@@ -701,6 +684,25 @@
     self.doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(dismissAudioView:)];
     [self.doneButton setStyle:UIBarButtonItemStyleDone];
     self.navigationItem.rightBarButtonItem = self.doneButton;
+    
+    //place timer on top
+    // add label
+    self.timerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, viewRect.size.width, recordingBkg.size.height)];
+    // timerLabel.autoresizingMask = reSizeMask;
+    [self.timerLabel setBackgroundColor:[UIColor clearColor]];
+    [self.timerLabel setTextColor:[UIColor whiteColor]];
+#ifdef __IPHONE_6_0
+    [self.timerLabel setTextAlignment:NSTextAlignmentCenter];
+#else
+    // for iOS SDK < 6.0
+    [self.timerLabel setTextAlignment:UITextAlignmentCenter];
+#endif
+    [self.timerLabel setText:@"0:00"];
+    [self.timerLabel setAccessibilityHint:NSLocalizedString(@"recorded time in minutes and seconds", nil)];
+    self.timerLabel.accessibilityTraits |= UIAccessibilityTraitUpdatesFrequently;
+    self.timerLabel.accessibilityTraits &= ~UIAccessibilityTraitStaticText;
+    [tmp addSubview:self.timerLabel];
+    //end timer
     
     [self setView:tmp];
     
